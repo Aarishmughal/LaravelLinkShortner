@@ -60,8 +60,9 @@ class LinkController extends Controller
         $parsedUrl = parse_url($shortUrl);
         if (isset($parsedUrl['path']) && strpos($parsedUrl['path'], "/short") !== false) {
             $token = str_replace('/short/', '', $parsedUrl['path']);
-            $link = Link::where('short_url_token', $token)->exists();
-            if ($link) {
+            $exists = Link::where('short_url_token', $token)->exists();
+            if ($exists) {
+                $link = Link::where('short_url_token', $token)->firstOrFail();
                 $originalUrl = $link->original_url;
                 return redirect()->route('original', ['originalUrl' => $originalUrl])->with(['success' => 'Link Found!']);
             } else {
